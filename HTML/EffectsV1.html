@@ -1,662 +1,750 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 	<meta charset="UTF-8">
 	<title>Effects</title>
 	<style>
-	*{
-		font-family: arial;
-	}
-	body{
-		overflow: hidden;
-	}
-	canvas{
-		position: absolute;
-		box-sizing: border-box;
-		top: 0;
-		left: 0;
-		height: 100%;
-		width: 100%;
-	}
+		* {
+			font-family: arial;
+		}
 
-	#menu{
-		background-color: black;
-		color: white;
-		position: absolute;
-		z-index: 1;
-		border: 1px solid black;
-		box-shadow: 0px 0px 3px black;
-		border-radius: 0px 0px 10px 10px;
-		min-width: 10%;
-		opacity: 0.6;
-		transition: 0.4s;
-		cursor: pointer;
-		top: 0;
-		right: 5%;
-		overflow: hidden;
-		visibility: hidden;
-	}
-	table{
-		width: 100%;
-	}
-	td {
-		vertical-align: top;
-		text-align: center;
-	}
+		body {
+			overflow: hidden;
+		}
 
-	#menuSlider{
-		height: 0px;
-		overflow: hidden;
-		transition: 0.4s;
-	}
-	.slider{
-		border-radius: 10px;
-		padding-left: 3px;
-		padding-right: 3px;
-	}
-	.red{
-		background: red;
-	}
-	.green{
-		background: green;
-	}
-	.blue{
-		background: blue;
-	}
+		canvas {
+			position: absolute;
+			box-sizing: border-box;
+			top: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+		}
+
+		#menu {
+			background-color: black;
+			color: white;
+			position: absolute;
+			z-index: 1;
+			border: 1px solid black;
+			box-shadow: 0px 0px 3px black;
+			border-radius: 0px 0px 10px 10px;
+			min-width: 10%;
+			opacity: 0.6;
+			transition: 0.4s;
+			cursor: pointer;
+			top: 0;
+			right: 5%;
+			overflow: hidden;
+			visibility: hidden;
+		}
+
+		table {
+			width: 100%;
+		}
+
+		td {
+			vertical-align: top;
+			text-align: center;
+		}
+
+		#menuSlider {
+			height: 0px;
+			overflow: hidden;
+			transition: 0.4s;
+		}
+
+		.slider {
+			border-radius: 10px;
+			padding-left: 3px;
+			padding-right: 3px;
+		}
+
+		.red {
+			background: red;
+		}
+
+		.green {
+			background: green;
+		}
+
+		.blue {
+			background: blue;
+		}
 	</style>
 </head>
+
 <body>
-<div id="menu">
-	<table>
-		<tr>
-			<td>
-				<div id="menuSlider">
-					<table>
-						<tr>
-							<td>
-								<h2>Background<h2>
-								<h3>Base Color</h3>
-								<input type="range" onchange="loadUserinput();" id="bcr" class="slider red" min="0" max="255" value="0"><br>
-								<input type="range" onchange="loadUserinput();" id="bcg" class="slider green" min="0" max="255" value="0"><br>
-								<input type="range" onchange="loadUserinput();" id="bcb" class="slider blue" min="0" max="255" value="0">
-								<h3>Noise Range</h3>
-								<input type="range" onchange="loadUserinput();" id="br1" class="slider" min="0" max="255" value="0"><br>
-								<input type="range" onchange="loadUserinput();" id="br2" class="slider" min="0" max="255" value="0">
-								<h3>Noise Color</h3>
-								<input type="range" onchange="loadUserinput();" id="bcnr" class="slider red" min="0" max="255" value="255"><br>
-								<input type="range" onchange="loadUserinput();" id="bcng" class="slider green" min="0" max="255" value="255"><br>
-								<input type="range" onchange="loadUserinput();" id="bcnb" class="slider blue" min="0" max="255" value="255">
-							</td>
-							<td class="center">
-								<h2>Particle<h2>
-								<h3>Speed</h3>
-								<input type="range" onchange="loadUserinput();" id="eSpeed" class="slider" min="0" max="200" value="15">
-								<h3>Max Speed</h3>
-								<input type="range" onchange="loadUserinput();" id="vrange" class="slider" min="100" max="10000" value="2000">
-								<h3>Draw Range</h3>
-								<input type="range" onchange="loadUserinput();" id="edr" class="slider" min="1" max="200" value="15">
-								<h3>Ammount</h3>
-								<input type="range" onchange="loadUserinput(); makeNewPoints();" id="ea" class="slider" min="2" max="500" value="15">
-							</td>
-							<td class="center">
-								<h2>Effect Rendering</h2>
-								<h3>Line Color</h3>
-								<input type="range" onchange="loadUserinput();" id="ecr" class="slider red" min="0" max="255" value="255"><br>
-								<input type="range" onchange="loadUserinput();" id="ecg" class="slider green" min="0" max="255" value="255"><br>
-								<input type="range" onchange="loadUserinput();" id="ecb" class="slider blue" min="0" max="255" value="255">
-							</td>
-							<td class="center">
-								<h2>Mouse Settings</h2>
-								<h3>Move Particles</h3>
-								<input type="checkbox" onchange="loadUserinput();" id="mm" checked="true"><br>
-								<input type="range" onchange="loadUserinput();" id="mr" class="slider" min="1" max="100" value="10">
-								<h3>Force Particles</h3>
-								<input type="range" onchange="loadUserinput();" id="ff1" class="slider" min="1" max="1000" value="10">	
-								<input type="range" onchange="loadUserinput();" id="ff2" class="slider" min="1" max="200" value="10">							
-							</td>
-						</tr>	
-					</table>
-					<h2>FPS: <span id="fps">0</span> <button onclick="makeLink();">Make Link with this config</button></h2>
-				</div>
-			</td>
-		</tr>
-		<tr>
-			<td id="sliderButton" onclick="slideMenu();">
-				&#8650
-			</td>
-		</tr>
-	</table>
-</div>
-<canvas id="background"></canvas>
-<canvas onmousemove="mouseMovement(event);" onmousedown="mouseGotClicked()" onmouseup="mouseGotReleased()" onmouseleave="mouseLeave();" id="pointer"></canvas>
-<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-<script>
-	function findGetParameter() {
-	    var result = [],
-	        tmp = [];
-	    var items = location.search.substr(1).split("&");
-	    for (var index = 0; index < items.length; index++) {
-	    		result.push(decodeURIComponent(items[index]));
-	    }
-	    return result;
-	}
-	console.log(findGetParameter());
-	function loadURLConfig(){
-		var parameter = findGetParameter();
-		var parts;
-		if(parameter[0]==""){
-			document.getElementById("menu").style.visibility = "visible";
-			return;
+	<div id="menu">
+		<table>
+			<tr>
+				<td>
+					<div id="menuSlider">
+						<table>
+							<tr>
+								<td>
+									<h2>Background
+										<h2>
+											<h3>Base Color</h3>
+											<input type="range" onchange="loadUserinput();" id="bcr" class="slider red" min="0" max="255" value="0">
+											<br>
+											<input type="range" onchange="loadUserinput();" id="bcg" class="slider green" min="0" max="255" value="0">
+											<br>
+											<input type="range" onchange="loadUserinput();" id="bcb" class="slider blue" min="0" max="255" value="0">
+											<h3>Noise Range</h3>
+											<input type="range" onchange="loadUserinput();" id="br1" class="slider" min="0" max="255" value="0">
+											<br>
+											<input type="range" onchange="loadUserinput();" id="br2" class="slider" min="0" max="255" value="0">
+											<h3>Noise Color</h3>
+											<input type="range" onchange="loadUserinput();" id="bcnr" class="slider red" min="0" max="255" value="255">
+											<br>
+											<input type="range" onchange="loadUserinput();" id="bcng" class="slider green" min="0" max="255" value="255">
+											<br>
+											<input type="range" onchange="loadUserinput();" id="bcnb" class="slider blue" min="0" max="255" value="255">
+								</td>
+								<td class="center">
+									<h2>Particle
+										<h2>
+											<h3>Speed</h3>
+											<input type="range" onchange="loadUserinput();" id="eSpeed" class="slider" min="0" max="200" value="15">
+											<h3>Max Speed</h3>
+											<input type="range" onchange="loadUserinput();" id="vrange" class="slider" min="100" max="10000" value="2000">
+											<h3>Draw Range</h3>
+											<input type="range" onchange="loadUserinput();" id="edr" class="slider" min="1" max="200" value="15">
+											<h3>Ammount</h3>
+											<input type="range" onchange="loadUserinput(); makeNewPoints();" id="ea" class="slider" min="2" max="500" value="15">
+								</td>
+								<td class="center">
+									<h2>Effect Rendering</h2>
+									<h3>Line Color</h3>
+									<input type="range" onchange="loadUserinput();" id="ecr" class="slider red" min="0" max="255" value="255">
+									<br>
+									<input type="range" onchange="loadUserinput();" id="ecg" class="slider green" min="0" max="255" value="255">
+									<br>
+									<input type="range" onchange="loadUserinput();" id="ecb" class="slider blue" min="0" max="255" value="255">
+									<h3>Rotate Colors</h3>
+									<input type="checkbox" onchange="loadUserinput();" id="rcr" checked="true">
+									<br>
+								</td>
+								<td class="center">
+									<h2>Mouse Settings</h2>
+									<h3>Move Particles</h3>
+									<input type="checkbox" onchange="loadUserinput();" id="mm" checked="true">
+									<br>
+									<input type="range" onchange="loadUserinput();" id="mr" class="slider" min="1" max="100" value="10">
+									<h3>Force Particles</h3>
+									<input type="range" onchange="loadUserinput();" id="ff1" class="slider" min="1" max="1000" value="10">
+									<input type="range" onchange="loadUserinput();" id="ff2" class="slider" min="1" max="200" value="10">
+								</td>
+							</tr>
+						</table>
+						<h2>FPS:
+							<span id="fps">0</span>
+							<button onclick="makeLink();">Make Link with this config</button>
+						</h2>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td id="sliderButton" onclick="slideMenu();">
+					&#8650
+				</td>
+			</tr>
+		</table>
+	</div>
+	<canvas id="background"></canvas>
+	<canvas onmousemove="mouseMovement(event);" onmousedown="mouseGotClicked()" onmouseup="mouseGotReleased()" onmouseleave="mouseLeave();"
+	 id="pointer"></canvas>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+	<script>
+		function findGetParameter() {
+			var result = [],
+				tmp = [];
+			var items = location.search.substr(1).split("&");
+			for (var index = 0; index < items.length; index++) {
+				result.push(decodeURIComponent(items[index]));
+			}
+			return result;
 		}
-		for(var i = 0; i < parameter.length; i++){
-			if(parameter[i] == "showMenu=true"){
+		console.log(findGetParameter());
+		function loadURLConfig() {
+			var parameter = findGetParameter();
+			var parts;
+			if (parameter[0] == "") {
 				document.getElementById("menu").style.visibility = "visible";
-				continue;
+				return;
 			}
-			if(parameter[i] == "mm=true"){
-				document.getElementById("mm").checked = true;
-			}else if(parameter[i] == "mm=false"){
-				document.getElementById("mm").checked = false;
-			}
-			parts = parameter[i].split("=");
-			console.log(parts);
-			if(document.getElementById(parts[0])!=null){
-				document.getElementById(parts[0]).value = parts[1];
-			}
-			
-		}
-	}
-	loadURLConfig();
-	var showMenu = false;
-	var pointer, clearData, userinput;
-	var fps = 5;
-	var timer = 0;
-	var counter = 0;
-	var vrange = 1000;
-	var finishedRendering = true;
-	var mouse = {
-		lastMove: 0,
-		mouseIsMoving: false,
-		x1: 0,
-		x2: 0,
-		y1: 0,
-		y2: 0,
-		isIn: false,
-		mouseClick: false,
-		div: 0
-	}
-
-	function mouseGotClicked(){
-		mouse.mouseClick=true;
-	}
-	function mouseGotReleased(){
-		mouse.mouseClick=false;
-	}
-
-	function mouseLeave(){
-		mouse.isIn = false;
-		mouse.mouseClick=false;
-	}
-	function mouseMovement(e){
-		mouse.isIn = true;
-		if(mouse.mouseIsMoving==false && mouse.lastMove>0){
-			mouse.mouseIsMoving = true;
-			mouse.x1 = e.clientX;
-			mouse.y1 = e.clientY;
-			mouse.lastMove = 0;
-		}
-		mouse.x2 = e.clientX;
-		mouse.y2 = e.clientY;
-		
-	}
-
-	function makeMenuFit(){
-		document.getElementById("menu").style.maxHeight = $(window).height()+"px";
-		document.getElementById("menu").style.maxWidth = $(window).width()+"px";
-	}
-	makeMenuFit();
-	$( window ).resize(function() {
-		makePoints(userinput.ea);
-  		loadUserinput();
-  		makeNewEffectCanvas();
-  		makeMenuFit();
-	});
-	function makeNewPoints(){
-		makePoints(userinput.ea);
-	}
-	function makeLink(){
-		function find(input){
-			return document.getElementById(input).value;
-		}
-		var url;
-		var urlbase = document.location.href.split("?");
-		url = urlbase[0]+"?bcr="+userinput.bcr;
-		url = url+"&bcg="+find("bcg");
-		url = url+"&bcb="+find("bcb");
-		url = url+"&br1="+find("br1");
-		url = url+"&br2="+find("br2");
-		url = url+"&bcnr="+find("bcnr");
-		url = url+"&bcng="+find("bcng");
-		url = url+"&bcnb="+find("bcnb");
-		url = url+"&ecr="+find("ecr");
-		url = url+"&ecg="+find("ecg");
-		url = url+"&ecb="+find("ecb");
-		url = url+"&eSpeed="+find("eSpeed");
-		url = url+"&edr="+find("edr");
-		url = url+"&ea="+find("ea");
-		url = url+"&mm="+document.getElementById("mm").checked;
-		url = url+"&mr="+find("mr");
-		url = url+"&ff1="+find("ff1");
-		url = url+"&ff2="+find("ff2");
-		url = url+"&vrange="+find("vrange");
-		url = url+"&showMenu=false";
-		alert(url);
-	}
-	function loadUserinput(){
-		function find(input){
-			return document.getElementById(input).value;
-		}
-		var ffv1;
-		if(find("ff2")>=190){
-			ffv1 = 200 - find("ff2");
-		}else{
-			ffv1 = find("ff2")/190;
-		}
-		userinput = {
-			bcr: find("bcr"),
-			bcg: find("bcg"),
-			bcb: find("bcb"),
-			br1: find("br1"),
-			br2: find("br2"),
-			bcnr: find("bcnr"),
-			bcng: find("bcng"),
-			bcnb: find("bcnb"),
-			ecr: find("ecr"),
-			ecg: find("ecg"),
-			ecb: find("ecb"),
-			eSpeed: find("eSpeed")/200000,
-			edr: find("edr"),
-			ea: find("ea"),
-			mm: document.getElementById("mm").checked,
-			mr: (($(window).width()+$(window).height())/2*find("mr"))/100,
-			mf: (($(window).width()+$(window).height())/2*100)/100,
-			ff1: find("ff1"),
-			ff2: ffv1,
-			vrange: find("vrange")
-		}
-		//console.log(userinput);
-		background();
-	}
-	
-	
-	function getRandomInt(min, max) {
-		min = Math.ceil(min);
-		max = Math.floor(max);
-		return Math.floor(Math.random() * (max - min)) + min;
-	}
-	function slideMenu(){
-		if(showMenu==false){
-			showMenu = true;
-			document.getElementById("sliderButton").innerHTML = "&#8648";
-			document.getElementById("menuSlider").style.height = "auto";
-			document.getElementById("menu").style.overflow = "scroll";
-		}else{
-			showMenu = false;
-			document.getElementById("sliderButton").innerHTML = "&#8650";
-			document.getElementById("menuSlider").style.height = "0";
-			document.getElementById("menu").style.overflow = "hidden";
-		}
-	}
-
-	function background(){
-		function makeAlpha(a,b){
-			if(a>=b){
-				return b;
-			}else{
-				return getRandomInt(a,b);
-			}
-		}
-		var c=document.getElementById("background");
-		c.style.background = "rgb("+userinput.bcr+","+userinput.bcg+","+userinput.bcb+")";
-		c.width = $(window).width();
-		c.height = $(window).height();
-		var ctx=c.getContext("2d");
-		var imgData=ctx.createImageData($(window).width(),$(window).height());
-		var string = "";
-		for (var i=0;i<imgData.data.length;i+=4){
-			imgData.data[i+0]=userinput.bcnr;
-			imgData.data[i+1]=userinput.bcng;
-			imgData.data[i+2]=userinput.bcnb;
-			imgData.data[i+3]=makeAlpha(userinput.br1, userinput.br2);		
-		}	
-		ctx.putImageData(imgData,0,0);
-	}
-	
-
-
-	function makePixel(x,y){
-		position = y*4*c1.width+x*4;
-		imgData1.data[position+3] = 255;
-	}
-
-	function engine(){
-		finishedRendering = false;
-		var timestamp;
-
-		var d = new Date();
-		timestamp = d.getTime();
-		function getRealDefinitions(a,b){
-			var returnValue = a - b;
-			if(returnValue>=0){
-				return returnValue;
-			}else{
-				return returnValue * (-1);
-			}
-		}
-		function getDistance(x1,y1,x2,y2){
-			var a = getRealDefinitions(x1,x2);
-			var b = getRealDefinitions(y1,y2);
-			var distance = Math.sqrt((a*a)+(b*b));
-			var range = (c1.width + c1.height)/2*(userinput.edr/100);
-			if(distance>range){
-				return null;
-			}else if(distance==0){
-				return 1;
-			}else{
-				return 1-distance/range;
-			}
-		}
-		function getDistanceSmall(x1,y1,x2,y2){
-			var a = getRealDefinitions(x1,x2);
-			var b = getRealDefinitions(y1,y2);
-			return Math.sqrt((a*a)+(b*b));
-		}
-		//console.log(getDistance(110,100,100,100));
-		ctx1.putImageData(imgData1,0,0);
-		var aValue;
-		var compare;
-		
-		//console.log(ctx1);
-		if(userinput.mm==true){
-			if(mouse.mouseIsMoving==true && mouse.lastMove>10){
-				mouse.div = getDistanceSmall(mouse.x1, mouse.y1, mouse.x2, mouse.y2);
-				//console.log(mouse);
-				for(var i = 0; i < userinput.ea; i++){
-					//console.log(getDistanceSmall(mouse.x1, mouse.y1, pointer[i].x, pointer[i].y));
-					if(getDistanceSmall(mouse.x1, mouse.y1, pointer[i].x, pointer[i].y)<userinput.mr){
-						pointer[i].x = pointer[i].x + (mouse.x1-mouse.x2)*(-1);
-						pointer[i].y = pointer[i].y + (mouse.y1-mouse.y2)*(-1);
-					}
-				}
-				mouse.lastMove = 0;
-				mouse.mouseIsMoving = false;
-			}
-		}
-		function makeForce(i, force){
-			var quadrant, xdiv, check, ydiv, movingToCursor;
-			if(mouse.x2<pointer[i].x){
-				if(mouse.y2<pointer[i].y){
-					quadrant = 4;
-					if(pointer[i].vx<=0&&pointer[i].vy<0){
-						movingToCursor = true;
-					}else{
-						movingToCursor = false;
-					}
-				}else{
-					quadrant = 1;
-					if(pointer[i].vx<=0&&pointer[i].vy>0){
-						movingToCursor = true;
-					}else{
-						movingToCursor = false;
-					}
-				}
-			}else{
-				if(mouse.y2<pointer[i].y){
-					quadrant = 3;
-					if(pointer[i].vx>=0&&pointer[i].vy<0){
-						movingToCursor = true;
-					}else{
-						movingToCursor = false;
-					}
-				}else{
-					quadrant = 2;
-					if(pointer[i].vx>=0&&pointer[i].vy>0){
-						movingToCursor = true;
-					}else{
-						movingToCursor = false;
-					}
-				}
-			}
-			xdiv = getRealDefinitions(mouse.x2, pointer[i].x);
-			ydiv = getRealDefinitions(mouse.y2, pointer[i].y);
-			if(xdiv == ydiv){
-				xdiv = 0.5;
-				ydiv = 0.5;
-			}else{
-
-				if(xdiv>ydiv){
-					ydiv = ydiv / xdiv;
-					xdiv = 1 - ydiv;
-				}else{
-					xdiv = xdiv / ydiv;
-					ydiv = 1 - xdiv;
-				}
-			}
-			function checkIfToFast(value){
-				//if(value>userinput.vrange*4){
-				//	return userinput.vrange;// - getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
-				//}else if(value<userinput.vrange*-4){
-				//	return userinput.vrange*-1;// + getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
-				//}else{
-					return value;
-				//}
-			}
-			switch (quadrant){
-				case 1:
-					if(movingToCursor==true){
-						pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1)*userinput.ff2;
-						pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1)*userinput.ff2;
-					}else{
-						pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1);
-						pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1);
-					}
-					break;
-				case 2:
-					if(movingToCursor==true){
-						pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1)*userinput.ff2;
-						pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1)*userinput.ff2;
-					}else{
-						pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1);
-						pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1);
-					}
-					break;
-				case 3:
-					if(movingToCursor==true){
-						pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1)*userinput.ff2;
-						pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1)*userinput.ff2;
-					}else{
-						pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1);
-						pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1);
-					}
-					
-					break;
-				case 4:
-					if(movingToCursor==true){
-						pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1)*userinput.ff2;
-						pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1)*userinput.ff2;
-					}else{
-						pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1);
-						pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1);
-					}
-					
-					break;
-				default:
-					console.log("Error: Quadrant not found");
-					break;
-			}
-		}
-		var effectiveForce, effectDistance;
-		if(mouse.isIn == true &&  mouse.mouseClick==true){
-			for(var i = 0; i < userinput.ea; i++){
-				effectDistance = getDistanceSmall(pointer[i].x, pointer[i].y, mouse.x2, mouse.y2);
-				effectiveForce = 1-(1/(userinput.mf/effectDistance));
-				if(effectiveForce<0){
-					effectiveForce = 0;
-				}
-				//console.log(effectiveForce);
-				makeForce(i, effectiveForce);
-			}
-		}
-		
-
-		function checkForGenralToFast(value){
-			if(value<=userinput.vrange&&value>=userinput.vrange*-1){
-				return value;
-			}
-			if(value>userinput.vrange){
-				return value-=10;// - getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
-			}else{
-				return value+=10;// + getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
-			}
-		}
-		for(var i = 0; i < userinput.ea; i++){
-			compare = Math.round(pointer[i].x+pointer[i].vx*fps*userinput.eSpeed);
-			if(compare<0 || compare>c1.width){
-				pointer[i].vx = pointer[i].vx*-1;
-				pointer[i].x = pointer[i].x+pointer[i].vx*fps*userinput.eSpeed;
-			}else{
-				pointer[i].x = pointer[i].x+pointer[i].vx*fps*userinput.eSpeed;
-			}
-			if(pointer[i].x>c1.width){
-				if(pointer[i].vx>0){
-					pointer[i].vx*=-1;
-				}
-				pointer[i].x=c1.width-1;
-			}else if(pointer[i].x<0){
-				if(pointer[i].vx<0){
-					pointer[i].vx*=-1;
-				}
-				pointer[i].x=1;
-			}
-			compare = Math.round(pointer[i].y+pointer[i].vy*fps*userinput.eSpeed);
-			if(compare<0 || compare>c1.height){
-				pointer[i].vy = pointer[i].vy*-1;
-				pointer[i].y = pointer[i].y+pointer[i].vy*fps*userinput.eSpeed;
-			}else{
-				pointer[i].y = pointer[i].y+pointer[i].vy*fps*userinput.eSpeed;	
-			}
-			if(pointer[i].y>c1.height){
-				if(pointer[i].vy>0){
-					pointer[i].vy*=-1;
-				}
-				pointer[i].y=c1.height-1;
-			}else if(pointer[i].y<0){
-				if(pointer[i].vy<0){
-					pointer[i].vy*=-1;
-				}
-				pointer[i].y=1;
-			}
-			pointer[i].vx = checkForGenralToFast(pointer[i].vx);
-			pointer[i].vy = checkForGenralToFast(pointer[i].vy);
-		}
-		
-
-		for(var i = 0; i < userinput.ea; i++){
-			for(var ii = 0; ii < i; ii++){
-				aValue = getDistance(pointer[i].x, pointer[i].y, pointer[ii].x, pointer[ii].y);
-				if(aValue==null){
+			for (var i = 0; i < parameter.length; i++) {
+				if (parameter[i] == "showMenu=true") {
+					document.getElementById("menu").style.visibility = "visible";
 					continue;
 				}
-				ctx1.beginPath();
-				ctx1.moveTo(pointer[i].x, pointer[i].y)
-				ctx1.lineTo(pointer[ii].x, pointer[ii].y);
-				ctx1.strokeStyle="rgba("+userinput.ecr+","+userinput.ecg+","+userinput.ecb+","+aValue+")";
-				ctx1.stroke();
-			}	
-		}
-		d = new Date();
-		fps = d.getTime()-timestamp;
-		timer=timer + fps;
-		counter++;
-		mouse.lastMove = mouse.lastMove + fps;
+				if (parameter[i] == "mm=true") {
+					document.getElementById("mm").checked = true;
+				} else if (parameter[i] == "mm=false") {
+					document.getElementById("mm").checked = false;
+				}
+				parts = parameter[i].split("=");
+				console.log(parts);
+				if (document.getElementById(parts[0]) != null) {
+					document.getElementById(parts[0]).value = parts[1];
+				}
 
-
-
-		if(timer>=1000){
-			document.getElementById("fps").innerHTML = counter;
-			timer = 0;
-			counter = 0;
-		}
-		
-		//ctx1.putImageData(imgData1,0,0);
-		finishedRendering = true;
-	}
-
-	function makePoints(input){
-		pointer = [input];
-		var vx,vy;
-		for(var i = 0; i < input; i++){
-			if(getRandomInt(0,2)==1){
-				vx = getRandomInt(1,userinput.vrange);
-			}else{
-				vx = getRandomInt(1,userinput.vrange)*(-1);
-			}
-			if(getRandomInt(0,2)==1){
-				vy = getRandomInt(1,userinput.vrange);
-			}else{
-				vy = getRandomInt(1,userinput.vrange)*(-1);
-			}
-
-			pointer[i] = {
-				x: getRandomInt(0,c1.width),
-				y: getRandomInt(0,c1.height),
-				vx: vx,
-				vy: vy
 			}
 		}
-	}
-	function resetImage(){
-		for (var i=0;i<imgData1.data.length;i+=4){
-			imgData1.data[i+0]=0;
-			imgData1.data[i+1]=255;
-			imgData1.data[i+2]=0;
-			imgData1.data[i+3]=0;		
+		loadURLConfig();
+		var colorRotator = [255, 0, 0];
+		var colorRotatorDelay = 1;
+		var colorRotatorSteps = 20;
+		var colorRotatorPosition = 1;
+		var showMenu = false;
+		var pointer, clearData, userinput;
+		var fps = 5;
+		var timer = 0;
+		var counter = 0;
+		var vrange = 1000;
+		var finishedRendering = true;
+		var mouse = {
+			lastMove: 0,
+			mouseIsMoving: false,
+			x1: 0,
+			x2: 0,
+			y1: 0,
+			y2: 0,
+			isIn: false,
+			mouseClick: false,
+			div: 0
 		}
 
-		ctx1.putImageData(imgData1,0,0);	
-	}
-	function makeNewEffectCanvas(){
-		c1=document.getElementById("pointer");
+		function mouseGotClicked() {
+			mouse.mouseClick = true;
+		}
+		function mouseGotReleased() {
+			mouse.mouseClick = false;
+		}
+
+		function mouseLeave() {
+			mouse.isIn = false;
+			mouse.mouseClick = false;
+		}
+		function mouseMovement(e) {
+			mouse.isIn = true;
+			if (mouse.mouseIsMoving == false && mouse.lastMove > 0) {
+				mouse.mouseIsMoving = true;
+				mouse.x1 = e.clientX;
+				mouse.y1 = e.clientY;
+				mouse.lastMove = 0;
+			}
+			mouse.x2 = e.clientX;
+			mouse.y2 = e.clientY;
+
+		}
+
+		function makeMenuFit() {
+			document.getElementById("menu").style.maxHeight = $(window).height() + "px";
+			document.getElementById("menu").style.maxWidth = $(window).width() + "px";
+		}
+		makeMenuFit();
+		$(window).resize(function () {
+			makePoints(userinput.ea);
+			loadUserinput();
+			makeNewEffectCanvas();
+			makeMenuFit();
+		});
+		function makeNewPoints() {
+			makePoints(userinput.ea);
+		}
+		function makeLink() {
+			function find(input) {
+				return document.getElementById(input).value;
+			}
+			var url;
+			var urlbase = document.location.href.split("?");
+			url = urlbase[0] + "?bcr=" + userinput.bcr;
+			url = url + "&bcg=" + find("bcg");
+			url = url + "&bcb=" + find("bcb");
+			url = url + "&br1=" + find("br1");
+			url = url + "&br2=" + find("br2");
+			url = url + "&bcnr=" + find("bcnr");
+			url = url + "&bcng=" + find("bcng");
+			url = url + "&bcnb=" + find("bcnb");
+			url = url + "&ecr=" + find("ecr");
+			url = url + "&ecg=" + find("ecg");
+			url = url + "&ecb=" + find("ecb");
+			url = url + "&eSpeed=" + find("eSpeed");
+			url = url + "&edr=" + find("edr");
+			url = url + "&ea=" + find("ea");
+			url = url + "&mm=" + document.getElementById("mm").checked;
+			url = url + "&mr=" + find("mr");
+			url = url + "&ff1=" + find("ff1");
+			url = url + "&ff2=" + find("ff2");
+			url = url + "&vrange=" + find("vrange");
+			url = url + "&rcr=" + find("rcr");
+			url = url + "&showMenu=false";
+			console.log(url);
+			alert(url);
+		}
+		function loadUserinput() {
+			function find(input) {
+				return document.getElementById(input).value;
+			}
+			var ffv1;
+			if (find("ff2") >= 190) {
+				ffv1 = 200 - find("ff2");
+			} else {
+				ffv1 = find("ff2") / 190;
+			}
+			userinput = {
+				bcr: find("bcr"),
+				bcg: find("bcg"),
+				bcb: find("bcb"),
+				br1: find("br1"),
+				br2: find("br2"),
+				bcnr: find("bcnr"),
+				bcng: find("bcng"),
+				bcnb: find("bcnb"),
+				ecr: find("ecr"),
+				ecg: find("ecg"),
+				ecb: find("ecb"),
+				eSpeed: find("eSpeed") / 200000,
+				edr: find("edr"),
+				ea: find("ea"),
+				rcr: find("rcr"),
+				mm: document.getElementById("mm").checked,
+				mr: (($(window).width() + $(window).height()) / 2 * find("mr")) / 100,
+				mf: (($(window).width() + $(window).height()) / 2 * 100) / 100,
+				ff1: find("ff1"),
+				ff2: ffv1,
+				vrange: find("vrange")
+			}
+			//console.log(userinput);
+			background();
+		}
+
+
+		function getRandomInt(min, max) {
+			min = Math.ceil(min);
+			max = Math.floor(max);
+			return Math.floor(Math.random() * (max - min)) + min;
+		}
+		function slideMenu() {
+			if (showMenu == false) {
+				showMenu = true;
+				document.getElementById("sliderButton").innerHTML = "&#8648";
+				document.getElementById("menuSlider").style.height = "auto";
+				document.getElementById("menu").style.overflow = "scroll";
+			} else {
+				showMenu = false;
+				document.getElementById("sliderButton").innerHTML = "&#8650";
+				document.getElementById("menuSlider").style.height = "0";
+				document.getElementById("menu").style.overflow = "hidden";
+			}
+		}
+
+		function background() {
+			function makeAlpha(a, b) {
+				if (a >= b) {
+					return b;
+				} else {
+					return getRandomInt(a, b);
+				}
+			}
+			var c = document.getElementById("background");
+			c.style.background = "rgb(" + userinput.bcr + "," + userinput.bcg + "," + userinput.bcb + ")";
+			c.width = $(window).width();
+			c.height = $(window).height();
+			var ctx = c.getContext("2d");
+			var imgData = ctx.createImageData($(window).width(), $(window).height());
+			var string = "";
+			for (var i = 0; i < imgData.data.length; i += 4) {
+				imgData.data[i + 0] = userinput.bcnr;
+				imgData.data[i + 1] = userinput.bcng;
+				imgData.data[i + 2] = userinput.bcnb;
+				imgData.data[i + 3] = makeAlpha(userinput.br1, userinput.br2);
+			}
+			ctx.putImageData(imgData, 0, 0);
+		}
+
+
+
+		function makePixel(x, y) {
+			position = y * 4 * c1.width + x * 4;
+			imgData1.data[position + 3] = 255;
+		}
+
+		function engine() {
+			finishedRendering = false;
+			var timestamp;
+
+			var d = new Date();
+			timestamp = d.getTime();
+			function getRealDefinitions(a, b) {
+				var returnValue = a - b;
+				if (returnValue >= 0) {
+					return returnValue;
+				} else {
+					return returnValue * (-1);
+				}
+			}
+			function getDistance(x1, y1, x2, y2) {
+				var a = getRealDefinitions(x1, x2);
+				var b = getRealDefinitions(y1, y2);
+				var distance = Math.sqrt((a * a) + (b * b));
+				var range = (c1.width + c1.height) / 2 * (userinput.edr / 100);
+				if (distance > range) {
+					return null;
+				} else if (distance == 0) {
+					return 1;
+				} else {
+					return 1 - distance / range;
+				}
+			}
+			function getDistanceSmall(x1, y1, x2, y2) {
+				var a = getRealDefinitions(x1, x2);
+				var b = getRealDefinitions(y1, y2);
+				return Math.sqrt((a * a) + (b * b));
+			}
+			//console.log(getDistance(110,100,100,100));
+			ctx1.putImageData(imgData1, 0, 0);
+			var aValue;
+			var compare;
+
+			//console.log(ctx1);
+			if (userinput.mm == true) {
+				if (mouse.mouseIsMoving == true && mouse.lastMove > 10) {
+					mouse.div = getDistanceSmall(mouse.x1, mouse.y1, mouse.x2, mouse.y2);
+					//console.log(mouse);
+					for (var i = 0; i < userinput.ea; i++) {
+						//console.log(getDistanceSmall(mouse.x1, mouse.y1, pointer[i].x, pointer[i].y));
+						if (getDistanceSmall(mouse.x1, mouse.y1, pointer[i].x, pointer[i].y) < userinput.mr) {
+							pointer[i].x = pointer[i].x + (mouse.x1 - mouse.x2) * (-1);
+							pointer[i].y = pointer[i].y + (mouse.y1 - mouse.y2) * (-1);
+						}
+					}
+					mouse.lastMove = 0;
+					mouse.mouseIsMoving = false;
+				}
+			}
+			function makeForce(i, force) {
+				var quadrant, xdiv, check, ydiv, movingToCursor;
+				if (mouse.x2 < pointer[i].x) {
+					if (mouse.y2 < pointer[i].y) {
+						quadrant = 4;
+						if (pointer[i].vx <= 0 && pointer[i].vy < 0) {
+							movingToCursor = true;
+						} else {
+							movingToCursor = false;
+						}
+					} else {
+						quadrant = 1;
+						if (pointer[i].vx <= 0 && pointer[i].vy > 0) {
+							movingToCursor = true;
+						} else {
+							movingToCursor = false;
+						}
+					}
+				} else {
+					if (mouse.y2 < pointer[i].y) {
+						quadrant = 3;
+						if (pointer[i].vx >= 0 && pointer[i].vy < 0) {
+							movingToCursor = true;
+						} else {
+							movingToCursor = false;
+						}
+					} else {
+						quadrant = 2;
+						if (pointer[i].vx >= 0 && pointer[i].vy > 0) {
+							movingToCursor = true;
+						} else {
+							movingToCursor = false;
+						}
+					}
+				}
+				xdiv = getRealDefinitions(mouse.x2, pointer[i].x);
+				ydiv = getRealDefinitions(mouse.y2, pointer[i].y);
+				if (xdiv == ydiv) {
+					xdiv = 0.5;
+					ydiv = 0.5;
+				} else {
+
+					if (xdiv > ydiv) {
+						ydiv = ydiv / xdiv;
+						xdiv = 1 - ydiv;
+					} else {
+						xdiv = xdiv / ydiv;
+						ydiv = 1 - xdiv;
+					}
+				}
+				function checkIfToFast(value) {
+					//if(value>userinput.vrange*4){
+					//	return userinput.vrange;// - getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
+					//}else if(value<userinput.vrange*-4){
+					//	return userinput.vrange*-1;// + getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
+					//}else{
+					return value;
+					//}
+				}
+				switch (quadrant) {
+					case 1:
+						if (movingToCursor == true) {
+							pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1) * userinput.ff2;
+							pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1) * userinput.ff2;
+						} else {
+							pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1);
+							pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1);
+						}
+						break;
+					case 2:
+						if (movingToCursor == true) {
+							pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1) * userinput.ff2;
+							pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1) * userinput.ff2;
+						} else {
+							pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1);
+							pointer[i].vy = pointer[i].vy + Math.round(ydiv * force * userinput.ff1);
+						}
+						break;
+					case 3:
+						if (movingToCursor == true) {
+							pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1) * userinput.ff2;
+							pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1) * userinput.ff2;
+						} else {
+							pointer[i].vx = pointer[i].vx + Math.round(xdiv * force * userinput.ff1);
+							pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1);
+						}
+
+						break;
+					case 4:
+						if (movingToCursor == true) {
+							pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1) * userinput.ff2;
+							pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1) * userinput.ff2;
+						} else {
+							pointer[i].vx = pointer[i].vx - Math.round(xdiv * force * userinput.ff1);
+							pointer[i].vy = pointer[i].vy - Math.round(ydiv * force * userinput.ff1);
+						}
+
+						break;
+					default:
+						console.log("Error: Quadrant not found");
+						break;
+				}
+			}
+			var effectiveForce, effectDistance;
+			if (mouse.isIn == true && mouse.mouseClick == true) {
+				for (var i = 0; i < userinput.ea; i++) {
+					effectDistance = getDistanceSmall(pointer[i].x, pointer[i].y, mouse.x2, mouse.y2);
+					effectiveForce = 1 - (1 / (userinput.mf / effectDistance));
+					if (effectiveForce < 0) {
+						effectiveForce = 0;
+					}
+					//console.log(effectiveForce);
+					makeForce(i, effectiveForce);
+				}
+			}
+
+
+			function checkForGenralToFast(value) {
+				if (value <= userinput.vrange && value >= userinput.vrange * -1) {
+					return value;
+				}
+				if (value > userinput.vrange) {
+					return value -= 10;// - getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
+				} else {
+					return value += 10;// + getRandomInt(Math.round(userinput.vrange*0.9999), userinput.vrange);
+				}
+			}
+			for (var i = 0; i < userinput.ea; i++) {
+				compare = Math.round(pointer[i].x + pointer[i].vx * fps * userinput.eSpeed);
+				if (compare < 0 || compare > c1.width) {
+					pointer[i].vx = pointer[i].vx * -1;
+					pointer[i].x = pointer[i].x + pointer[i].vx * fps * userinput.eSpeed;
+				} else {
+					pointer[i].x = pointer[i].x + pointer[i].vx * fps * userinput.eSpeed;
+				}
+				if (pointer[i].x > c1.width) {
+					if (pointer[i].vx > 0) {
+						pointer[i].vx *= -1;
+					}
+					pointer[i].x = c1.width - 1;
+				} else if (pointer[i].x < 0) {
+					if (pointer[i].vx < 0) {
+						pointer[i].vx *= -1;
+					}
+					pointer[i].x = 1;
+				}
+				compare = Math.round(pointer[i].y + pointer[i].vy * fps * userinput.eSpeed);
+				if (compare < 0 || compare > c1.height) {
+					pointer[i].vy = pointer[i].vy * -1;
+					pointer[i].y = pointer[i].y + pointer[i].vy * fps * userinput.eSpeed;
+				} else {
+					pointer[i].y = pointer[i].y + pointer[i].vy * fps * userinput.eSpeed;
+				}
+				if (pointer[i].y > c1.height) {
+					if (pointer[i].vy > 0) {
+						pointer[i].vy *= -1;
+					}
+					pointer[i].y = c1.height - 1;
+				} else if (pointer[i].y < 0) {
+					if (pointer[i].vy < 0) {
+						pointer[i].vy *= -1;
+					}
+					pointer[i].y = 1;
+				}
+				pointer[i].vx = checkForGenralToFast(pointer[i].vx);
+				pointer[i].vy = checkForGenralToFast(pointer[i].vy);
+			}
+
+
+			for (var i = 0; i < userinput.ea; i++) {
+				for (var ii = 0; ii < i; ii++) {
+					aValue = getDistance(pointer[i].x, pointer[i].y, pointer[ii].x, pointer[ii].y);
+					if (aValue == null) {
+						continue;
+					}
+					ctx1.beginPath();
+					ctx1.moveTo(pointer[i].x, pointer[i].y)
+					ctx1.lineTo(pointer[ii].x, pointer[ii].y);
+					if (userinput.rcr) {
+						ctx1.strokeStyle = "rgba(" + colorRotator[0] + "," + colorRotator[1] + "," + colorRotator[2] + "," + aValue + ")";
+					} else {
+						ctx1.strokeStyle = "rgba(" + userinput.ecr + "," + userinput.ecg + "," + userinput.ecb + "," + aValue + ")";
+
+					}
+					ctx1.stroke();
+				}
+			}
+			d = new Date();
+			fps = d.getTime() - timestamp;
+			timer = timer + fps;
+			counter++;
+			mouse.lastMove = mouse.lastMove + fps;
+
+
+
+			if (timer >= 1000) {
+				document.getElementById("fps").innerHTML = counter;
+				timer = 0;
+				counter = 0;
+			}
+
+			//ctx1.putImageData(imgData1,0,0);
+			finishedRendering = true;
+		}
+
+		function makePoints(input) {
+			pointer = [input];
+			var vx, vy;
+			for (var i = 0; i < input; i++) {
+				if (getRandomInt(0, 2) == 1) {
+					vx = getRandomInt(1, userinput.vrange);
+				} else {
+					vx = getRandomInt(1, userinput.vrange) * (-1);
+				}
+				if (getRandomInt(0, 2) == 1) {
+					vy = getRandomInt(1, userinput.vrange);
+				} else {
+					vy = getRandomInt(1, userinput.vrange) * (-1);
+				}
+
+				pointer[i] = {
+					x: getRandomInt(0, c1.width),
+					y: getRandomInt(0, c1.height),
+					vx: vx,
+					vy: vy
+				}
+			}
+		}
+		function resetImage() {
+			for (var i = 0; i < imgData1.data.length; i += 4) {
+				imgData1.data[i + 0] = 0;
+				imgData1.data[i + 1] = 255;
+				imgData1.data[i + 2] = 0;
+				imgData1.data[i + 3] = 0;
+			}
+
+			ctx1.putImageData(imgData1, 0, 0);
+		}
+		function makeNewEffectCanvas() {
+			c1 = document.getElementById("pointer");
+			c1.width = $(window).width();
+			c1.height = $(window).height();
+			ctx1 = c1.getContext("2d");
+			imgData1 = ctx1.createImageData($(window).width(), $(window).height());
+			for (var i = 0; i < imgData1.data.length; i += 4) {
+				imgData1.data[i + 0] = 0;
+				imgData1.data[i + 1] = 0;
+				imgData1.data[i + 2] = 0;
+				imgData1.data[i + 3] = 0;
+			}
+			clearData = imgData1.data;
+		}
+
+		var c1 = document.getElementById("pointer");
 		c1.width = $(window).width();
 		c1.height = $(window).height();
-		ctx1=c1.getContext("2d");
-		imgData1=ctx1.createImageData($(window).width(),$(window).height());
-		for (var i=0;i<imgData1.data.length;i+=4){
-			imgData1.data[i+0]=0;
-			imgData1.data[i+1]=0;
-			imgData1.data[i+2]=0;
-			imgData1.data[i+3]=0;		
+		var ctx1 = c1.getContext("2d");
+		var imgData1 = ctx1.createImageData($(window).width(), $(window).height());
+		for (var i = 0; i < imgData1.data.length; i += 4) {
+			imgData1.data[i + 0] = 0;
+			imgData1.data[i + 1] = 0;
+			imgData1.data[i + 2] = 0;
+			imgData1.data[i + 3] = 0;
 		}
 		clearData = imgData1.data;
-	}
+		loadUserinput();
+		makePoints(userinput.ea);
 
-	var c1=document.getElementById("pointer");
-	c1.width = $(window).width();
-	c1.height = $(window).height();
-	var ctx1=c1.getContext("2d");
-	var imgData1=ctx1.createImageData($(window).width(),$(window).height());
-	for (var i=0;i<imgData1.data.length;i+=4){
-		imgData1.data[i+0]=0;
-		imgData1.data[i+1]=0;
-		imgData1.data[i+2]=0;
-		imgData1.data[i+3]=0;		
-	}
-	clearData = imgData1.data;
-	loadUserinput();
-	makePoints(userinput.ea);
-
-	setInterval(function(){ if(finishedRendering==true){engine();} }, 0);
+		setInterval(function () { if (finishedRendering == true) { engine(); } }, 0);
+		setInterval(function () {
+			switch (colorRotatorPosition) {
+				case 1:
+					if (colorRotator[1] >= 255) {
+						colorRotatorPosition++;
+						break;
+					}
+					colorRotator[1]+=colorRotatorSteps;
+					break;
+				case 2:
+					if (colorRotator[0] <= 0) {
+						colorRotatorPosition++;
+						break;
+					}
+					colorRotator[0]-=colorRotatorSteps;
+					break;
+				case 3:
+					if (colorRotator[2] >= 255) {
+						colorRotatorPosition++;
+						break;
+					}
+					colorRotator[2]+=colorRotatorSteps;
+					break;
+				case 4:
+					if (colorRotator[1] <= 0) {
+						colorRotatorPosition++;
+						break;
+					}
+					colorRotator[1]-=colorRotatorSteps;
+					break;
+				case 5:
+				if (colorRotator[0] >= 255) {
+						colorRotatorPosition++;
+						break;
+					}
+					colorRotator[0]+=colorRotatorSteps;
+					break;
+				case 6:
+				if (colorRotator[2] <= 0) {
+						colorRotatorPosition=1;
+						break;
+					}
+					colorRotator[2]-=colorRotatorSteps;
+					break;
+				default:
+					colorRotatorPosition = 1;
+			}
+		}, colorRotatorDelay)
 	//console.log(pointer);
-</script>
+	</script>
 </body>
+
 </html>
